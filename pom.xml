@@ -7,18 +7,15 @@
 	<groupId>cd.connect</groupId>
 	<artifactId>connect-java-cucumber</artifactId>
 	<version>1.0</version>
+	<name>connect-java-cucumber</name>
+
+	<description>
+		Java Cucumber OpenAPI test example
+	</description>
+
+	<url>https://clearpointnz.github.io/connect/</url>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>cd.connect.samples.slackapp</groupId>
-			<artifactId>slack-message-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>info.cukes</groupId>
 			<artifactId>cucumber-junit</artifactId>
@@ -132,22 +129,10 @@
 			<version>1.8</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.5.6</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
 	</dependencies>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
 		<swagger-annotations.version>1.5.0</swagger-annotations.version>
 		<jersey.version>2.12</jersey.version>
 		<jackson.version>2.4.2</jackson.version>
@@ -166,245 +151,55 @@
 					<useIncrementalCompilation>false</useIncrementalCompilation>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>io.swagger</groupId>
+				<artifactId>swagger-codegen-maven-plugin</artifactId>
+				<version>2.2.3</version>
+				<dependencies>
+					<dependency>
+						<groupId>cd.connect.openapi</groupId>
+						<artifactId>connect-openapi-jersey2</artifactId>
+						<version>1.2-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<output>${project.basedir}/target/generated-sources/api</output>
+							<apiPackage>cd.connect.example.api</apiPackage>
+							<modelPackage>cd.connect.example.model</modelPackage>
+							<inputSpec>src/main/resources/oas/oas.json</inputSpec>
+							<language>jersey2-api</language>
+							<library>jersey2-api</library>
+							<configOptions>
+								<dateLibrary>java8</dateLibrary>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/api/src/gen/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>defaultcompile</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>3.0.1</version>
-						<executions>
-							<execution>
-								<id>copy-resources</id>
-								<!-- here the phase you need -->
-								<phase>compile</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/target/html-reports</outputDirectory>
-									<resources>
-										<resource>
-											<directory>src/test</directory>
-											<includes>
-												<include>index.html</include>
-											</includes>
-											<filtering>true</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy features-parallel</id>
-								<!-- here the phase you need -->
-								<phase>test-compile</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/target/test-classes/features/features-parallel
-									</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${basedir}/target/test-classes/features-parallel</directory>
-											<includes>
-												<include>**/*</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy features-sequential</id>
-								<!-- here the phase you need -->
-								<phase>test-compile</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/target/test-classes/features/features-sequential
-									</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${basedir}/target/test-classes/features-sequential</directory>
-											<includes>
-												<include>**/*</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.github.temyers</groupId>
-						<artifactId>cucumber-jvm-parallel-plugin</artifactId>
-						<version>1.3.0</version>
-						<executions>
-							<execution>
-								<id>generateRunners for sequential run</id>
-								<phase>generate-test-sources</phase>
-								<goals>
-									<goal>generateRunners</goal>
-								</goals>
-								<configuration>
-									<glue>steps</glue>
-									<featuresDirectory>src/test/resources/features-sequential</featuresDirectory>
-									<cucumberOutputDir>target/cucumber-reports/sequential</cucumberOutputDir>
-									<format>json,junit</format>
-									<tags>"~@ignored"</tags>
-									<namingScheme>pattern</namingScheme>
-									<namingPattern>Sequential{c}E2E</namingPattern>
-								</configuration>
-							</execution>
-							<execution>
-								<id>generateRunners for parallel run</id>
-								<phase>generate-test-sources</phase>
-								<goals>
-									<goal>generateRunners</goal>
-								</goals>
-								<configuration>
-									<glue>steps</glue>
-									<featuresDirectory>src/test/resources/features-parallel</featuresDirectory>
-									<cucumberOutputDir>target/cucumber-reports/parallel</cucumberOutputDir>
-									<format>json,junit</format>
-									<tags>"~@ignored"</tags>
-									<namingScheme>pattern</namingScheme>
-									<namingPattern>Parallel{c}E2E</namingPattern>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>parallel</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<!-- Please do not upgrade -->
-						<version>2.19.1</version>
-						<executions>
-							<execution>
-								<id>default-test</id>
-								<goals>
-									<goal>test</goal>
-								</goals>
-								<configuration>
-									<forkCount>2C</forkCount>
-									<reuseForks>true</reuseForks>
-									<argLine>-Xmx512m -DforkNo=${surefire.forkNumber}</argLine>
-									<includes>
-										<include>**/Parallel*E2E.class</include>
-									</includes>
-									<testFailureIgnore>true</testFailureIgnore>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.3</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-							<useIncrementalCompilation>false</useIncrementalCompilation>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.4.0</version>
-						<executions>
-							<execution>
-								<id>my-execution</id>
-								<phase>test</phase>
-								<goals>
-									<goal>java</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<mainClass>cd.connect.service.CucumberReportMerger</mainClass>
-							<arguments>
-								<argument>${project.basedir}/target/cucumber-reports/</argument>
-								<argument>${project.basedir}/target/html-reports</argument>
-							</arguments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>sequential</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<!-- Please do not upgrade -->
-						<version>2.19.1</version>
-						<executions>
-							<execution>
-								<id>default-test</id>
-								<goals>
-									<goal>test</goal>
-								</goals>
-								<configuration>
-									<forkCount>0</forkCount>
-									<reuseForks>true</reuseForks>
-									<includes>
-										<include>**/Sequential*E2E.class</include>
-									</includes>
-									<testFailureIgnore>true</testFailureIgnore>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.3</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-							<useIncrementalCompilation>false</useIncrementalCompilation>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.4.0</version>
-						<executions>
-							<execution>
-								<id>my-execution</id>
-								<phase>test</phase>
-								<goals>
-									<goal>java</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<mainClass>cd.connect.service.CucumberReportMerger</mainClass>
-							<arguments>
-								<argument>${project.basedir}/target/cucumber-reports/</argument>
-								<argument>${project.basedir}/target/html-reports</argument>
-							</arguments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 </project>

@@ -1,24 +1,24 @@
-*** This project is WIP ***
-
-
 == Description
 
+Sample test project to demonstrate API testing with
 
 == Installation Instructions
-Compile with Maven
 
-`mvn clean compile test-compile`
+Prerequisites:
 
-Run parallel tests: 
+* Java 1.8
 
-`mvn test -Pparallel`
+* Maven > 3.3.9
 
-Run sequential tests: 
+Compile with Maven:
 
-`mvn test -Psequential`
+run from project root: `mvn clean compile`
 
-== Build Status
-TravisCI link or something else - delete if not needed
+Run tests:
+
+run `mvn test`
+
+Recommendation: If using IntelliJ to run tests, mark generated-sources/api/src/gen/java directory as Sources Root
 
 == Documentation
 There is no further specific documentation for this.
