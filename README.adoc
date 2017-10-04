@@ -1,6 +1,6 @@
 == Description
 
-Sample test project to demonstrate API testing with
+Sample test project to demonstrate API testing with Java, Cucumber and OpenAPI
 
 == Installation Instructions
 
