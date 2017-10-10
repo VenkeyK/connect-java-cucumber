@@ -33,7 +33,7 @@ public class MyStepdefs {
 	}
 
 	@Given("^I add a book with id (.*) and name (.*)$")
-	public void addABookWithIdAndNam(String id, String name) throws Throwable {
+	public void addABookWithIdAndName(String id, String name) throws Throwable {
 		BookInput body = new BookInput();
 		body.id(id);
 		body.name(name);
@@ -57,18 +57,18 @@ public class MyStepdefs {
 	}
 
 	@Then("^A book with id (.*) should have a name (.*)$")
-	public void aBookWithIdIdShouldHaveAName(String id, String name) throws Throwable {
+	public void aBookWithIdShouldHaveAName(String id, String name) throws Throwable {
 		assertThat(apiService.getBooksApi().getBook(id).name).isEqualTo(name);
 	}
 
 	@When("^I delete a book with id (.*)$")
-	public void deleteABookWithIdAndName(String id) throws Throwable {
+	public void deleteABookWithId(String id) throws Throwable {
 		Response response = apiService.getBooksApi().deleteBook(id);
 		assertThat(response.getStatus()).isEqualTo(204);
 	}
 
 	@Then("^a book with id (.*) should not be in the list$")
-	public void aBookWithIdIdAndNameNameShouldNotBeInTheList(String id) throws Throwable {
+	public void aBookWithIdShouldNotBeInTheList(String id) throws Throwable {
 		bookList = apiService.getBooksApi().listBooks();
 
 		for(BookInput book : bookList.getBooks()){
