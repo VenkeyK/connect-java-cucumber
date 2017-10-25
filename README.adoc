@@ -21,7 +21,7 @@ run `mvn test`
 Recommendation: If using IntelliJ to run tests, mark generated-sources/api/src/gen/java directory as Sources Root
 
 == Documentation
-There is no further specific documentation for this.
+Check out our link:http://connect.cd/2017/10/introduction-to-microservice-test-automation-with-cucumber-jvm-and-openapi/[first post] introducing microservice test automation using Cucumber JVM and OpenAPI
 
 The main documentation for link:http://connect.cd[Connect] can be found at: link:http://docs.connect.cd[docs.connect.cd]
 
